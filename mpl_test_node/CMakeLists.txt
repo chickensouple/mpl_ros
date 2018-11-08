@@ -27,6 +27,14 @@ include_directories(${EIGEN3_INCLUDE_DIR} ${MOTION_PRIMITIVE_LIBRARY_INCLUDE_DIR
 
 catkin_simple()
 
+cs_add_executable(map_planner_3d_node src/map_planner_3d_node.cpp)
+target_link_libraries(map_planner_3d_node ${MOTION_PRIMITIVE_LIBRARY_LIBRARIES})
+
+
+cs_add_executable(test_node src/test_node.cpp)
+target_link_libraries(test_node ${MOTION_PRIMITIVE_LIBRARY_LIBRARIES})
+
+
 cs_add_executable(map_planner_node src/map_planner_node.cpp)
 target_link_libraries(map_planner_node ${MOTION_PRIMITIVE_LIBRARY_LIBRARIES})
 

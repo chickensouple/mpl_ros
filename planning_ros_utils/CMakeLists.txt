@@ -69,5 +69,5 @@ cs_add_library(planning_rviz_plugins ${SOURCE_FILES})
 target_link_libraries(planning_rviz_plugins ${QT_LIBRARIES} ${catkin_LIBRARIES} ${rviz_DEFAULT_PLUGIN_LIBRARIES} ${MOTION_PRIMITIVE_LIBRARY_LIBRARIES})
 
 cs_install()
-
+cs_install_scripts(plugin_description.xml)
 cs_export()

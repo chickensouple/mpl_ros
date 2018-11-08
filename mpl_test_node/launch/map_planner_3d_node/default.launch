@@ -1,0 +1,21 @@
+<launch>
+
+    <node pkg="planning_ros_utils"
+        type="cloud_to_map"
+        name="cloud_to_map">
+        <remap from="cloud_to_map/cloud" to ="/rtabmap/cloud_map"/>
+    </node>
+
+    <node pkg="mpl_test_node"
+        type="map_planner_3d_node"
+        name="map_planner_3d_node"
+        output="screen">
+    </node>
+
+
+    <node pkg="rviz"
+        type="rviz"
+        name="rviz"
+        args="-d $(find mpl_test_node)/launch/map_planner_3d_node/test.rviz">
+    </node>
+</launch>
