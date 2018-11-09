@@ -25,7 +25,7 @@ public:
         _planner_ptr.reset(new MPL::VoxelMapPlanner(true));
 
         _map_sub.reset(new ros::Subscriber(nh.subscribe("/cloud_to_map/voxel_map", 1, &PlannerWrapper::voxelMapCallback, this)));
-        _traj_srv.reset(new ros::ServiceServer(nh.advertiseService("get_traj", &PlannerWrapper::handlTrajSrv, this)));
+        _traj_srv.reset(new ros::ServiceServer(nh.advertiseService("get_traj", &PlannerWrapper::handleTrajSrv, this)));
 
         _has_map = false;
 
@@ -39,7 +39,8 @@ public:
                     _U.push_back(Vec3f(dx, dy, dz));
     }
 
-    planning_ros_msgs::Trajectory plan(Waypoint3D start, Waypoint3D goal) {
+    // TODO: return if path is valid
+    bool plan(Waypoint3D start, Waypoint3D goal, planning_ros_msgs::Trajectory& traj_msg) {
         _map_mutex.lock();
         bool has_map = _has_map;
         planning_ros_msgs::VoxelMap plan_map = _map; // copy over map
@@ -63,13 +64,19 @@ public:
         _planner_ptr->setTol(0.5); // Tolerance for goal region
 
         bool valid = _planner_ptr->plan(start, goal);
+
+        if (not valid) {
+            return false;
+        }
+
         auto traj = _planner_ptr->getTraj();
         planning_ros_msgs::PrimitiveArray prs_msg =
             toPrimitiveArrayROSMsg(traj.getPrimitives());
 
-        planning_ros_msgs::Trajectory traj_msg = toTrajectoryROSMsg(traj);
+        traj_msg = toTrajectoryROSMsg(traj);
         traj_msg.header.frame_id = "map";
-        return traj_msg;
+
+        return true;
     }
 
     void voxelMapCallback(const planning_ros_msgs::VoxelMap::ConstPtr& msg) {
@@ -79,7 +86,7 @@ public:
         _map_mutex.unlock();
     }
 
-    bool handlTrajSrv(planning_ros_msgs::PlanningService::Request &req,
+    bool handleTrajSrv(planning_ros_msgs::PlanningService::Request &req,
                       planning_ros_msgs::PlanningService::Response &resp) {
 
         Waypoint3D start;
@@ -99,9 +106,9 @@ public:
         goal.acc = Vec3f(0, 0, 0);
         goal.jrk = Vec3f(0, 0, 0);
 
-        resp.traj = plan(start, goal);
+        bool valid = plan(start, goal, resp.traj);
 
-        return true;
+        return valid;
     }
 
 private:

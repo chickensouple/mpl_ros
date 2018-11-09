@@ -9,6 +9,7 @@
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>catkin_simple</build_depend>
 
+  <depend>tf2_ros</depend>
   <depend>rosbag</depend>
   <depend>motion_primitive_library</depend>
   <depend>mpl_external_planner</depend>
