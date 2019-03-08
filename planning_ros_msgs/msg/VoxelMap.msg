@@ -10,3 +10,8 @@ geometry_msgs/Point dim
 
 # Subscript (xi, yi, zi) indices probability data[xi + dim.x * yi + zi * dim.y * dim.z]
 int8[] data
+
+# constants
+int8 FREE = 0
+int8 UNKNOWN = -1
+int8 OCCUPIED = 100
